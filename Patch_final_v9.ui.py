@@ -371,11 +371,6 @@ class Ui_Dialog(object):
     def patch(self):
 
         if self.checkBox_8.isChecked():
-            print("yes")
-            print(output_dir)
-            print(iwfi_path)
-            print(single_file)
-            print(iwfi_name)
             ui.stitch(output_dir, iwfi_path, single_file)
 
 if __name__ == '__main__':
