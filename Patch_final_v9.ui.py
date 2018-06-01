@@ -184,7 +184,7 @@ class Ui_Dialog(object):
     def pushbutton(self):
         self.pushButton_1.clicked.connect(self.output_dir)
         self.pushButton_2.clicked.connect(self.open_iwfi)
-        #self.pushButton_3.clicked.connect(self.openfile_bios)
+        self.pushButton_3.clicked.connect(self.bios_folder)
         self.pushButton_4.clicked.connect(self.single_file)
         self.pushButton_5.clicked.connect(self.patch)
         self.pushButton_6.clicked.connect(self.clear_log)
@@ -208,6 +208,7 @@ class Ui_Dialog(object):
             self.textBrowser.append("============== Output Folder =================")
             self.textBrowser.append("Output folder Path :")
             self.textBrowser.append(output_dir)
+
     def open_iwfi(self):
         # Open IWFI
         title = "IWFI File"
@@ -278,7 +279,6 @@ class Ui_Dialog(object):
         self.textBrowser.append("Single BIOS file Path:")
         self.textBrowser.append(single_file)
 
-
     def checkbox_default(self):
         # self.checkBox.setChecked(True)
         #self.checkBox.stateChanged.connect(self.search_file)
@@ -304,9 +304,27 @@ class Ui_Dialog(object):
             self.checkBox_9.setText("Close")
             Dialog.resize(600, 230)
             self.textBrowser.hide()
+
     def clear_log(self):
         self.textBrowser.setPlainText("")
 
+    def bios_folder(self):
+        options = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly
+        directory = QFileDialog.getExistingDirectory(None,
+                                                     "QFileDialog.getExistingDirectory()",
+                                                     "", options=options)
+
+        self.lineEdit_3.setText(str(directory))
+
+        global bios_path
+        bios_path = str(directory)
+
+        if str(directory) == "":
+            self.textBrowser.append("BIOS Rom folder no input")
+
+        else:
+            self.textBrowser.append("BIOS Rom Folder :")
+            self.textBrowser.append(bios_path)
 
     def stitch(self, output, iwfi, BIOS_rom):
         progress.setValue(0)
@@ -367,11 +385,14 @@ class Ui_Dialog(object):
         self.textBrowser.append("Spend " + cost_time + "finish patch")
         progress.setValue(100)
 
-
     def patch(self):
 
         if self.checkBox_8.isChecked():
             ui.stitch(output_dir, iwfi_path, single_file)
+
+    def code_base(self):
+       # FSP
+       fsp_1 = glob.glob(bios_path + '/CNL*.rom')
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
