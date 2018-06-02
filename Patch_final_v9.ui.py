@@ -188,7 +188,8 @@ class Ui_Dialog(object):
         self.pushButton_4.clicked.connect(self.single_file)
         self.pushButton_5.clicked.connect(self.patch)
         self.pushButton_6.clicked.connect(self.clear_log)
-
+    def radio_button(self):
+        self.radioButton_1.toggled.connect(self.code_base)
     def output_dir(self):
         global output_dir
 
@@ -320,11 +321,12 @@ class Ui_Dialog(object):
         bios_path = str(directory)
 
         if str(directory) == "":
-            self.textBrowser.append("BIOS Rom folder no input")
+                self.textBrowser.append("BIOS Rom folder no input")
 
         else:
-            self.textBrowser.append("BIOS Rom Folder :")
-            self.textBrowser.append(bios_path)
+                self.textBrowser.append("BIOS Rom Folder :")
+                self.textBrowser.append(bios_path)
+
 
     def stitch(self, output, iwfi, BIOS_rom):
         progress.setValue(0)
@@ -391,8 +393,42 @@ class Ui_Dialog(object):
             ui.stitch(output_dir, iwfi_path, single_file)
 
     def code_base(self):
-       # FSP
-       fsp_1 = glob.glob(bios_path + '/CNL*.rom')
+        if self.radioButton_1.isChecked():
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            self.textBrowser.append("Total  rom file : " + str(len(all)))
+
+            #  FSP
+            fsp_1 = glob.glob(bios_path + '/*FSP*.rom')
+            self.textBrowser.append("===============FSP===============")
+            for fsp_rom in fsp_1:
+                patch_file = os.path.splitext(fsp_rom)[0]
+                patch_file = os.path.basename(patch_file)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_1)))
+            #  EDK
+            edk_1 = glob.glob(bios_path + '/*EDK*.rom')
+            edk_2 = [k for k in edk_1 if 'XCODE' not in k]
+            self.textBrowser.append("===============EDK===============")
+            for edk_rom in edk_2:
+                patch_file = os.path.splitext(edk_rom)[0]
+                patch_file = os.path.basename(edk_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total EDK rom file : " + str(len(edk_2)))
+
+            #  XCODE
+            xcode_1 = glob.glob(bios_path + '/*XCODE*.rom')
+
+            self.textBrowser.append("===============XCODE===============")
+            for xcode_rom in xcode_1:
+                patch_file = os.path.splitext(xcode_rom)[0]
+                patch_file = os.path.basename(xcode_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_1)))
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -400,6 +436,7 @@ if __name__ == '__main__':
     ui = Ui_Dialog()
     ui.setupUi(Dialog)
     ui.pushbutton()
+    ui.radio_button()
     ui.checkbox_default()
     ui.text()
     Dialog.show()
