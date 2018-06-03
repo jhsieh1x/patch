@@ -272,6 +272,8 @@ class Ui_Dialog(object):
            self.textBrowser.append("IWFI Length : " +str( len(ifwi_file)))
 
     def single_file(self):
+        # Clear BIOS Folder path when single file choose
+        self.lineEdit_3.clear()
         # Open Single File
         title = "Joy"
         path = ""
@@ -314,6 +316,9 @@ class Ui_Dialog(object):
         self.textBrowser.setPlainText("")
 
     def bios_folder(self):
+        # Clear single  path when BIOS Folder choose
+        self.lineEdit_4.clear()
+
         options = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly
         directory = QFileDialog.getExistingDirectory(None,
                                                      "QFileDialog.getExistingDirectory()",
