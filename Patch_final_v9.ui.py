@@ -287,8 +287,8 @@ class Ui_Dialog(object):
         self.textBrowser.append(single_file)
 
     def checkbox_default(self):
-        # self.checkBox.setChecked(True)
-        #self.checkBox.stateChanged.connect(self.search_file)
+        #self.checkBox.setChecked(True)
+        self.checkBox.stateChanged.connect(self.search_file)
         #self.checkBox_2.stateChanged.connect(self.search_file)
         #self.checkBox_3.stateChanged.connect(self.search_file)
         #self.checkBox_4.stateChanged.connect(self.search_file)
@@ -337,69 +337,7 @@ class Ui_Dialog(object):
                 self.textBrowser.append(bios_path)
 
 
-    def stitch(self, output, iwfi, BIOS_rom):
-        progress.setValue(0)
-        t1 = time.time()
-        with open(iwfi, 'rb') as ifwi_fileobj:
-            ifwi_file = ifwi_fileobj.read()
-        with open(BIOS_rom, 'rb') as bios_fileobj:
-            bios_file = bios_fileobj.read()
 
-        # Get BIOS region begin offset address from IFWI BIN file offset 0x44 0x45.
-        low_byte = ifwi_file[0x44]
-        high_byte = ifwi_file[0x45]
-        bios_begin = (high_byte << 8) | low_byte
-        bios_begin = bios_begin << 0x0C
-
-        # Get BIOS region end offset address from IFWI BIN file offset 0x46 0x47.
-        low_byte = ifwi_file[0x46]
-        high_byte = ifwi_file[0x47]
-        bios_end = (high_byte << 8) | low_byte
-        bios_end = (bios_end << 0x0C) | 0xFFF
-        bios_len = bios_end - bios_begin + 1
-
-        # Check if BIOS ROM file size matches BIOS region length in IFWI.
-        if not (len(bios_file) == bios_len):
-            print("The BIOS ROM file size does not match to BIOS region length descriptor in IFWI.")
-            sys.exit(1)
-
-        # Stich the BIOS ROM with IFWI BIN file.
-        byte_index = 0
-        combined_file = bytearray(len(ifwi_file))
-        for index in range(bios_begin):
-            combined_file[index] = ifwi_file[index]
-            byte_index = byte_index + 1
-
-        for byte in bios_file:
-            combined_file[byte_index] = byte
-            byte_index = byte_index + 1
-
-        # Used IWFI Name create output folder
-        output1 = output + "/" + iwfi_name + "_patched"
-        print (output1)
-
-        #self.textBrowser.append("Final Output Path" + output1)
-
-        if not os.path.exists(output1):
-            os.mkdir(output1)
-        
-        bios_name =os.path.splitext(BIOS_rom)[0]
-        bios_name = os.path.basename(bios_name)
-        print(bios_name)
-        
-        with open(output1 + "/" + bios_name + "_patched.bin", 'wb') as combined_fileobj:
-            combined_fileobj.write(combined_file)
-
-        t2 = time.time()
-        cost_time = str(t2 - t1)
-        print(cost_time)
-        self.textBrowser.append("Spend " + cost_time + "finish patch")
-        progress.setValue(100)
-
-    def patch(self):
-
-        if self.checkBox_8.isChecked():
-            ui.stitch(output_dir, iwfi_path, single_file)
 
     def code_base(self, enabled):
         global fsp, edk, xcode
@@ -489,6 +427,227 @@ class Ui_Dialog(object):
                 self.textBrowser.append(patch_file)
             self.textBrowser.append("=================================")
             self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_1)))
+    def search_file(self):
+        if self.radioButton_1.isChecked() and self.checkBox.isChecked() :
+
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            self.textBrowser.append("Total  rom file : " + str(len(all)))
+
+            #  FSP
+            fsp = []
+            fsp_1 = glob.glob(bios_path + '/*FSP*.rom')
+            self.textBrowser.append("===============FSP===============")
+            for fsp_rom in fsp_1:
+                fsp.append(fsp_rom)
+                patch_file = os.path.splitext(fsp_rom)[0]
+                patch_file = os.path.basename(patch_file)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_1)))
+
+            #  EDK
+            edk =[]
+            edk_1 = glob.glob(bios_path + '/*EDK*.rom')
+            edk_2 = [k for k in edk_1 if 'XCODE' not in k]
+            self.textBrowser.append("===============EDK===============")
+            for edk_rom in edk_2:
+                edk.append(edk_rom)
+                patch_file = os.path.splitext(edk_rom)[0]
+                patch_file = os.path.basename(edk_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total EDK rom file : " + str(len(edk_2)))
+
+            #  XCODE
+            xcode = []
+            xcode_1 = glob.glob(bios_path + '/*XCODE*.rom')
+            self.textBrowser.append("===============XCODE===============")
+            for xcode_rom in xcode_1:
+                xcode.append(xcode_rom)
+                patch_file = os.path.splitext(xcode_rom)[0]
+                patch_file = os.path.basename(xcode_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_1)))
+        if self.radioButton_2.isChecked() and self.checkBox.isChecked() :
+
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            self.textBrowser.append("Total  rom file : " + str(len(all)))
+
+            #  FSP
+            fsp = []
+            fsp_1 = glob.glob(bios_path + '/*FSP*.rom')
+            self.textBrowser.append("===============FSP===============")
+            for fsp_rom in fsp_1:
+                fsp.append(fsp_rom)
+                patch_file = os.path.splitext(fsp_rom)[0]
+                patch_file = os.path.basename(patch_file)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_1)))
+        if self.radioButton_3.isChecked() and self.checkBox.isChecked() :
+
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            self.textBrowser.append("Total  rom file : " + str(len(all)))
+
+            #  EDK
+            edk =[]
+            edk_1 = glob.glob(bios_path + '/*EDK*.rom')
+            edk_2 = [k for k in edk_1 if 'XCODE' not in k]
+            self.textBrowser.append("===============EDK===============")
+            for edk_rom in edk_2:
+                edk.append(edk_rom)
+                patch_file = os.path.splitext(edk_rom)[0]
+                patch_file = os.path.basename(edk_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total EDK rom file : " + str(len(edk_2)))
+        if self.radioButton_4.isChecked() and self.checkBox.isChecked() :
+
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            self.textBrowser.append("Total  rom file : " + str(len(all)))
+
+            #  XCODE
+            xcode = []
+            xcode_1 = glob.glob(bios_path + '/*XCODE*.rom')
+            self.textBrowser.append("===============XCODE===============")
+            for xcode_rom in xcode_1:
+                xcode.append(xcode_rom)
+                patch_file = os.path.splitext(xcode_rom)[0]
+                patch_file = os.path.basename(xcode_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_1)))
+
+    def stitch(self, output, iwfi, BIOS_rom):
+        progress.setValue(0)
+
+        with open(iwfi, 'rb') as ifwi_fileobj:
+            ifwi_file = ifwi_fileobj.read()
+        with open(BIOS_rom, 'rb') as bios_fileobj:
+            bios_file = bios_fileobj.read()
+
+        # Get BIOS region begin offset address from IFWI BIN file offset 0x44 0x45.
+        low_byte = ifwi_file[0x44]
+        high_byte = ifwi_file[0x45]
+        bios_begin = (high_byte << 8) | low_byte
+        bios_begin = bios_begin << 0x0C
+
+        # Get BIOS region end offset address from IFWI BIN file offset 0x46 0x47.
+        low_byte = ifwi_file[0x46]
+        high_byte = ifwi_file[0x47]
+        bios_end = (high_byte << 8) | low_byte
+        bios_end = (bios_end << 0x0C) | 0xFFF
+        bios_len = bios_end - bios_begin + 1
+
+        # Check if BIOS ROM file size matches BIOS region length in IFWI.
+        if not (len(bios_file) == bios_len):
+            print("The BIOS ROM file size does not match to BIOS region length descriptor in IFWI.")
+            sys.exit(1)
+
+        #  Stitch the BIOS ROM with IFWI BIN file.
+        byte_index = 0
+        combined_file = bytearray(len(ifwi_file))
+        for index in range(bios_begin):
+            combined_file[index] = ifwi_file[index]
+            byte_index = byte_index + 1
+
+        for byte in bios_file:
+            combined_file[byte_index] = byte
+            byte_index = byte_index + 1
+
+        #  Transfer file path to file name
+        bios_name = os.path.splitext(BIOS_rom)[0]
+        bios_name = os.path.basename(bios_name)
+
+        with open(output + "/" + bios_name + "_patched.bin", 'wb') as combined_fileobj:
+            combined_fileobj.write(combined_file)
+
+
+        progress.setValue(100)
+
+    def patch(self):
+        global fsp_path, edk_path, xcode_path
+        # Create Folder ( FSP. EDK. XCODE)
+        # Used IWFI Name create output folder
+        default_path = output_dir + "/" + iwfi_name + "_patched"
+        os.mkdir(default_path)
+        print(default_path)
+
+        if self.radioButton_1.isChecked():
+
+            # FSP Path
+            fsp_path = default_path + "/FSP"
+            if not os.path.exists(fsp_path):
+                os.mkdir(fsp_path)
+
+
+            # EDK Path
+            edk_path = default_path + "/EDK"
+            if not os.path.exists(edk_path):
+                os.mkdir(edk_path)
+
+            # XCODE  Path
+            xcode_path = default_path + "/XCODE"
+            if not os.path.exists(xcode_path):
+                os.mkdir(xcode_path)
+        if self.radioButton_2.isChecked():
+            # FSP Path
+            fsp_path = default_path + "/FSP"
+            if not os.path.exists(fsp_path):
+                os.mkdir(fsp_path)
+        if self.radioButton_3.isChecked():
+            # EDK Path
+            edk_path = default_path + "/EDK"
+            if not os.path.exists(edk_path):
+                os.mkdir(edk_path)
+        if self.radioButton_4.isChecked():
+            # XCODE  Path
+            xcode_path = default_path + "/XCODE"
+            if not os.path.exists(xcode_path):
+                os.mkdir(xcode_path)
+
+
+        if self.radioButton_1.isChecked() and self.checkBox.isChecked():
+
+            #  FSP
+
+            for fsp_rom in fsp:
+                ui.stitch(fsp_path, iwfi_path, fsp_rom)
+
+            # EDK
+            for edk_rom in edk:
+                ui.stitch(edk_path, iwfi_path, edk_rom)
+
+            # XCODE
+            for xcode_rom in xcode:
+                ui.stitch(xcode_path, iwfi_path, xcode_rom)
+
+        if self.radioButton_2.isChecked() and self.checkBox.isChecked():
+
+            #  FSP
+
+            for fsp_rom in fsp:
+                ui.stitch(fsp_path, iwfi_path, fsp_rom)
+
+        if self.radioButton_3.isChecked() and self.checkBox.isChecked():
+
+            # EDK
+            for edk_rom in edk:
+                ui.stitch(edk_path, iwfi_path, edk_rom)
+
+        if self.radioButton_4.isChecked() and self.checkBox.isChecked():
+
+            # XCODE
+            for xcode_rom in xcode:
+                ui.stitch(xcode_path, iwfi_path, xcode_rom)
+
+        if self.checkBox_8.isChecked():
+            ui.stitch(output_dir, iwfi_path, single_file)
 
 
 if __name__ == '__main__':
