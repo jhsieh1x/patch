@@ -288,13 +288,15 @@ class Ui_Dialog(object):
 
     def checkbox_default(self):
         #self.checkBox.setChecked(True)
-        self.checkBox.stateChanged.connect(self.search_file)
-        #self.checkBox_2.stateChanged.connect(self.search_file)
-        #self.checkBox_3.stateChanged.connect(self.search_file)
-        #self.checkBox_4.stateChanged.connect(self.search_file)
-        #self.checkBox_5.stateChanged.connect(self.search_file)
+        self.checkBox.stateChanged.connect(self.search_file) #  ALL
+        self.checkBox_2.stateChanged.connect(self.search_file) # ICL
+        self.checkBox_3.stateChanged.connect(self.search_file) # Pro_ICL
+        self.checkBox_4.stateChanged.connect(self.search_file) # CFL
+        self.checkBox_5.stateChanged.connect(self.search_file) # Pro_CFL
+        self.checkBox_6.stateChanged.connect(self.search_file) # CNL
+        self.checkBox_7.stateChanged.connect(self.search_file) # Pro_CNL
         self.checkBox_9.stateChanged.connect(self.text)
-        #self.checkBox_7.stateChanged.connect(self.search_file)
+
 
     def text(self):
 
@@ -336,192 +338,450 @@ class Ui_Dialog(object):
                 self.textBrowser.append("BIOS Rom Folder :")
                 self.textBrowser.append(bios_path)
 
+    def core_base_search(self, path, code_base, search_name):
+        global fsp, edk, xcode
 
+        #  FSP
+        if code_base == "FSP" :
 
+            fsp = []
+            sname = str(search_name)
+            fsp_1 = glob.glob(path + sname)
+            self.textBrowser.append("===============" + code_base + "===============")
+            for fsp_rom in fsp_1:
+                fsp.append(fsp_rom)
+                patch_file = os.path.splitext(fsp_rom)[0]
+                patch_file = os.path.basename(patch_file)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_1)))
+
+        if code_base == "EDK":
+
+            #  EDK
+            edk =[]
+            sname = str(search_name)
+            edk_1 = glob.glob(bios_path + sname)
+            edk_2 = [k for k in edk_1 if 'XCODE' not in k]
+            self.textBrowser.append("===============" + code_base + "===============")
+            for edk_rom in edk_2:
+                edk.append(edk_rom)
+                patch_file = os.path.splitext(edk_rom)[0]
+                patch_file = os.path.basename(edk_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total EDK rom file : " + str(len(edk_2)))
+
+        if code_base == "XCODE":
+
+            #  XCODE
+            xcode = []
+            sname = str(search_name)
+            xcode_1 = glob.glob(bios_path + sname)
+            self.textBrowser.append("===============" + code_base + "===============")
+            for xcode_rom in xcode_1:
+                xcode.append(xcode_rom)
+                patch_file = os.path.splitext(xcode_rom)[0]
+                patch_file = os.path.basename(xcode_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_1)))
 
     def code_base(self, enabled):
-        global fsp, edk, xcode
+
 
         if self.radioButton_1.isChecked() and enabled:
 
-
+            # ALL
             self.textBrowser.append("=================================")
             all = glob.glob(bios_path + '/*.rom')
             self.textBrowser.append("Total  rom file : " + str(len(all)))
 
-            #  FSP
-            fsp = []
-            fsp_1 = glob.glob(bios_path + '/*FSP*.rom')
-            self.textBrowser.append("===============FSP===============")
-            for fsp_rom in fsp_1:
-                fsp.append(fsp_rom)
-                patch_file = os.path.splitext(fsp_rom)[0]
-                patch_file = os.path.basename(patch_file)
-                self.textBrowser.append(patch_file)
-            self.textBrowser.append("=================================")
-            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_1)))
 
-            #  EDK
-            edk =[]
-            edk_1 = glob.glob(bios_path + '/*EDK*.rom')
-            edk_2 = [k for k in edk_1 if 'XCODE' not in k]
-            self.textBrowser.append("===============EDK===============")
-            for edk_rom in edk_2:
-                edk.append(edk_rom)
-                patch_file = os.path.splitext(edk_rom)[0]
-                patch_file = os.path.basename(edk_rom)
-                self.textBrowser.append(patch_file)
-            self.textBrowser.append("=================================")
-            self.textBrowser.append("Total EDK rom file : " + str(len(edk_2)))
+            # FSP
+            code = "FSP"
+            search_string = "/*FSP*.rom"
+            ui.core_base_search(bios_path, code, search_string)
 
-            #  XCODE
-            xcode = []
-            xcode_1 = glob.glob(bios_path + '/*XCODE*.rom')
-            self.textBrowser.append("===============XCODE===============")
-            for xcode_rom in xcode_1:
-                xcode.append(xcode_rom)
-                patch_file = os.path.splitext(xcode_rom)[0]
-                patch_file = os.path.basename(xcode_rom)
-                self.textBrowser.append(patch_file)
-            self.textBrowser.append("=================================")
-            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_1)))
+            # EDK
+            code = "EDK"
+            search_string = '/*EDK*.rom'
+            ui.core_base_search(bios_path, code, search_string)
+
+            # XCODE
+            code = "XCODE"
+            search_string = "/*XCODE*.rom"
+            ui.core_base_search(bios_path, code, search_string)
+
+
         if self.radioButton_2.isChecked() and enabled:
-
-            #  FSP
-            fsp = []
-            fsp_1 = glob.glob(bios_path + '/*FSP*.rom')
-            self.textBrowser.append("===============FSP===============")
-            for fsp_rom in fsp_1:
-                fsp.append(fsp_rom)
-                patch_file = os.path.splitext(fsp_rom)[0]
-                patch_file = os.path.basename(patch_file)
-                self.textBrowser.append(patch_file)
-            self.textBrowser.append("=================================")
-            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_1)))
+            # FSP
+            code = "FSP"
+            search_string = "/*FSP*.rom"
+            ui.core_base_search(bios_path, code, search_string )
 
         if self.radioButton_3.isChecked() and enabled:
-
-            #  EDK
-            edk =[]
-            edk_1 = glob.glob(bios_path + '/*EDK*.rom')
-            edk_2 = [k for k in edk_1 if 'XCODE' not in k]
-            self.textBrowser.append("===============EDK===============")
-            for edk_rom in edk_2:
-                edk.append(edk_rom)
-                patch_file = os.path.splitext(edk_rom)[0]
-                patch_file = os.path.basename(edk_rom)
-                self.textBrowser.append(patch_file)
-            self.textBrowser.append("=================================")
-            self.textBrowser.append("Total EDK rom file : " + str(len(edk_2)))
-
+            # EDK
+            code = "EDK"
+            search_string = '/*EDK*.rom'
+            ui.core_base_search(bios_path, code, search_string)
         if self.radioButton_4.isChecked() and enabled:
+            # XCODE
+            code = "XCODE"
+            search_string = "/*XCODE*.rom"
+            ui.core_base_search(bios_path, code, search_string)
 
-            #  XCODE
-            xcode = []
-            xcode_1 = glob.glob(bios_path + '/*XCODE*.rom')
-            self.textBrowser.append("===============XCODE===============")
-            for xcode_rom in xcode_1:
-                xcode.append(xcode_rom)
-                patch_file = os.path.splitext(xcode_rom)[0]
-                patch_file = os.path.basename(xcode_rom)
-                self.textBrowser.append(patch_file)
-            self.textBrowser.append("=================================")
-            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_1)))
+
     def search_file(self):
+        global fsp_final, edk_final ,xcode_final
         if self.radioButton_1.isChecked() and self.checkBox.isChecked() :
-
+            # ALL
             self.textBrowser.append("=================================")
             all = glob.glob(bios_path + '/*.rom')
             self.textBrowser.append("Total  rom file : " + str(len(all)))
 
+            # FSP
+            code = "FSP"
+            search_string = "/*FSP*.rom"
+            ui.core_base_search(bios_path, code, search_string)
+
+            # EDK
+            code = "EDK"
+            search_string = '/*EDK*.rom'
+            ui.core_base_search(bios_path, code, search_string)
+
+            # XCODE
+            code = "XCODE"
+            search_string = "/*XCODE*.rom"
+            ui.core_base_search(bios_path, code, search_string)
+
+        if self.radioButton_1.isChecked() and self.checkBox_2.isChecked() :
+
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            all_cfl = [s for s in all if "ICL" in s]
+            all_cfl_1 = [s for s in all_cfl if "Prod_ICL" not in s]
+            self.textBrowser.append("Total  rom file : " + str(len(all_cfl_1)))
+
             #  FSP
-            fsp = []
-            fsp_1 = glob.glob(bios_path + '/*FSP*.rom')
+            fsp_final = []
+            fsp_1 = [s for s in fsp if "ICL" in s]
+            fsp_2 = [s for s in fsp_1 if "Prod_ICL" not in s]
             self.textBrowser.append("===============FSP===============")
-            for fsp_rom in fsp_1:
-                fsp.append(fsp_rom)
+
+            for fsp_rom in fsp_2:
+                fsp_final.append(fsp_rom)
                 patch_file = os.path.splitext(fsp_rom)[0]
                 patch_file = os.path.basename(patch_file)
                 self.textBrowser.append(patch_file)
             self.textBrowser.append("=================================")
-            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_1)))
+            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_2)))
+
 
             #  EDK
-            edk =[]
-            edk_1 = glob.glob(bios_path + '/*EDK*.rom')
-            edk_2 = [k for k in edk_1 if 'XCODE' not in k]
+            edk_final = []
+            edk_1 = [k for k in edk if 'XCODE' not in k]
+            edk_2 = [k for k in edk_1 if "ICL" in k]
+            edk_3 = [k for k in edk_2 if "Prod_ICL" not in k]
             self.textBrowser.append("===============EDK===============")
-            for edk_rom in edk_2:
-                edk.append(edk_rom)
+
+            for edk_rom in edk_3:
+                edk_final.append(edk_rom)
                 patch_file = os.path.splitext(edk_rom)[0]
                 patch_file = os.path.basename(edk_rom)
                 self.textBrowser.append(patch_file)
             self.textBrowser.append("=================================")
-            self.textBrowser.append("Total EDK rom file : " + str(len(edk_2)))
+            self.textBrowser.append("Total EDK rom file : " + str(len(edk_3)))
 
             #  XCODE
-            xcode = []
-            xcode_1 = glob.glob(bios_path + '/*XCODE*.rom')
+            xcode_final = []
+            xcode_1 = [s for s in xcode if "ICL" in s]
+            xcode_2 = [s for s in xcode_1 if "Prod_ICL" not in s]
             self.textBrowser.append("===============XCODE===============")
-            for xcode_rom in xcode_1:
-                xcode.append(xcode_rom)
+
+            for xcode_rom in xcode_2:
+                xcode_final.append(xcode_rom)
                 patch_file = os.path.splitext(xcode_rom)[0]
                 patch_file = os.path.basename(xcode_rom)
                 self.textBrowser.append(patch_file)
             self.textBrowser.append("=================================")
-            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_1)))
+            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_2)))
+        if self.radioButton_1.isChecked() and self.checkBox_3.isChecked():
+
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            all_cfl = [s for s in all if "ICL" in s]
+            all_cfl_1 = [s for s in all_cfl if "Prod_ICL" in s]
+            self.textBrowser.append("Total  rom file : " + str(len(all_cfl_1)))
+
+            #  FSP
+            fsp_final = []
+            fsp_1 = [s for s in fsp if "ICL" in s]
+            fsp_2 = [s for s in fsp_1 if "Prod_ICL" in s]
+            self.textBrowser.append("===============FSP===============")
+
+            for fsp_rom in fsp_2:
+                fsp_final.append(fsp_rom)
+                patch_file = os.path.splitext(fsp_rom)[0]
+                patch_file = os.path.basename(patch_file)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_2)))
+
+            #  EDK
+            edk_final = []
+            edk_1 = [k for k in edk if 'XCODE' not in k]
+            edk_2 = [k for k in edk_1 if "ICL" in k]
+            edk_3 = [k for k in edk_2 if "Prod_ICL" in k]
+            self.textBrowser.append("===============EDK===============")
+
+            for edk_rom in edk_3:
+                edk_final.append(edk_rom)
+                patch_file = os.path.splitext(edk_rom)[0]
+                patch_file = os.path.basename(edk_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total EDK rom file : " + str(len(edk_3)))
+
+            #  XCODE
+            xcode_final = []
+            xcode_1 = [s for s in xcode if "ICL" in s]
+            xcode_2 = [s for s in xcode_1 if "Prod_ICL" in s]
+            self.textBrowser.append("===============XCODE===============")
+
+            for xcode_rom in xcode_2:
+                xcode_final.append(xcode_rom)
+                patch_file = os.path.splitext(xcode_rom)[0]
+                patch_file = os.path.basename(xcode_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_2)))
+        if self.radioButton_1.isChecked() and self.checkBox_4.isChecked() :
+
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            all_cfl = [s for s in all if "CFL" in s]
+            all_cfl_1 = [s for s in all_cfl if "Prod_CFL" not in s]
+            self.textBrowser.append("Total  rom file : " + str(len(all_cfl_1)))
+
+            #  FSP
+            fsp_final = []
+            fsp_1 = [s for s in fsp if "CFL" in s]
+            fsp_2 = [s for s in fsp_1 if "Prod_CFL" not in s]
+            self.textBrowser.append("===============FSP===============")
+
+            for fsp_rom in fsp_2:
+                fsp_final.append(fsp_rom)
+                patch_file = os.path.splitext(fsp_rom)[0]
+                patch_file = os.path.basename(patch_file)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_2)))
+
+
+            #  EDK
+            edk_final = []
+            edk_1 = [k for k in edk if 'XCODE' not in k]
+            edk_2 = [k for k in edk_1 if "CFL" in k]
+            edk_3 = [k for k in edk_2 if "Prod_CFL" not in k]
+            self.textBrowser.append("===============EDK===============")
+
+            for edk_rom in edk_3:
+                edk_final.append(edk_rom)
+                patch_file = os.path.splitext(edk_rom)[0]
+                patch_file = os.path.basename(edk_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total EDK rom file : " + str(len(edk_3)))
+
+            #  XCODE
+            xcode_final = []
+            xcode_1 = [s for s in xcode if "CFL" in s]
+            xcode_2 = [s for s in xcode_1 if "Prod_CFL" not in s]
+            self.textBrowser.append("===============XCODE===============")
+
+            for xcode_rom in xcode_2:
+                xcode_final.append(xcode_rom)
+                patch_file = os.path.splitext(xcode_rom)[0]
+                patch_file = os.path.basename(xcode_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_2)))
+        if self.radioButton_1.isChecked() and self.checkBox_5.isChecked():
+
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            all_cfl = [s for s in all if "CFL" in s]
+            all_cfl_1 = [s for s in all_cfl if "Prod_CFL" in s]
+            self.textBrowser.append("Total  rom file : " + str(len(all_cfl_1)))
+
+            #  FSP
+            fsp_final = []
+            fsp_1 = [s for s in fsp if "CFL" in s]
+            fsp_2 = [s for s in fsp_1 if "Prod_CFL" in s]
+            self.textBrowser.append("===============FSP===============")
+
+            for fsp_rom in fsp_2:
+                fsp_final.append(fsp_rom)
+                patch_file = os.path.splitext(fsp_rom)[0]
+                patch_file = os.path.basename(patch_file)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_2)))
+
+            #  EDK
+            edk_final = []
+            edk_1 = [k for k in edk if 'XCODE' not in k]
+            edk_2 = [k for k in edk_1 if "CFL" in k]
+            edk_3 = [k for k in edk_2 if "Prod_CFL" in k]
+            self.textBrowser.append("===============EDK===============")
+
+            for edk_rom in edk_3:
+                edk_final.append(edk_rom)
+                patch_file = os.path.splitext(edk_rom)[0]
+                patch_file = os.path.basename(edk_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total EDK rom file : " + str(len(edk_3)))
+
+            #  XCODE
+            xcode_final = []
+            xcode_1 = [s for s in xcode if "CFL" in s]
+            xcode_2 = [s for s in xcode_1 if "Prod_CFL" in s]
+            self.textBrowser.append("===============XCODE===============")
+
+            for xcode_rom in xcode_2:
+                xcode_final.append(xcode_rom)
+                patch_file = os.path.splitext(xcode_rom)[0]
+                patch_file = os.path.basename(xcode_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_2)))
+        if self.radioButton_1.isChecked() and self.checkBox_6.isChecked() :
+
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            all_cnl = [s for s in all if "CNL" in s]
+            all_cnl_1 = [s for s in all_cnl if "Prod_CNL" not in s]
+            self.textBrowser.append("Total  rom file : " + str(len(all_cnl_1)))
+
+            #  FSP
+            fsp_final = []
+            print(fsp)
+            fsp_1 = [a for a in fsp if "CNL_FSP" in a]
+            print(fsp_1)
+            fsp_2 = [e for e in fsp_1 if "Prod_CNL" not in e]
+            self.textBrowser.append("===============FSP===============")
+
+            for fsp_rom in fsp_2:
+                fsp_final.append(fsp_rom)
+                patch_file = os.path.splitext(fsp_rom)[0]
+                patch_file = os.path.basename(patch_file)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_2)))
+
+
+            #  EDK
+            edk_final = []
+            edk_1 = [k for k in edk if 'XCODE' not in k]
+            edk_2 = [k for k in edk_1 if "CNL" in k]
+            edk_3 = [k for k in edk_2 if "Prod_CNL" not in k]
+            self.textBrowser.append("===============EDK===============")
+
+            for edk_rom in edk_3:
+                edk_final.append(edk_rom)
+                patch_file = os.path.splitext(edk_rom)[0]
+                patch_file = os.path.basename(edk_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total EDK rom file : " + str(len(edk_3)))
+
+            #  XCODE
+            xcode_final = []
+            xcode_1 = [s for s in xcode if "CNL" in s]
+            xcode_2 = [s for s in xcode_1 if "Prod_CNL" not in s]
+            self.textBrowser.append("===============XCODE===============")
+
+            for xcode_rom in xcode_2:
+                xcode_final.append(xcode_rom)
+                patch_file = os.path.splitext(xcode_rom)[0]
+                patch_file = os.path.basename(xcode_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_2)))
+        if self.radioButton_1.isChecked() and self.checkBox_7.isChecked():
+
+            self.textBrowser.append("=================================")
+            all = glob.glob(bios_path + '/*.rom')
+            all_cfl = [s for s in all if "CNL" in s]
+            all_cfl_1 = [s for s in all_cfl if "Prod_CNL" in s]
+            self.textBrowser.append("Total  rom file : " + str(len(all_cfl_1)))
+
+            #  FSP
+            fsp_final = []
+            fsp_1 = [s for s in fsp if "CNL" in s]
+            fsp_2 = [s for s in fsp_1 if "Prod_CNL" in s]
+            self.textBrowser.append("===============FSP===============")
+
+            for fsp_rom in fsp_2:
+                fsp_final.append(fsp_rom)
+                patch_file = os.path.splitext(fsp_rom)[0]
+                patch_file = os.path.basename(patch_file)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_2)))
+
+            #  EDK
+            edk_final = []
+            edk_1 = [k for k in edk if 'XCODE' not in k]
+            edk_2 = [k for k in edk_1 if "CNL" in k]
+            edk_3 = [k for k in edk_2 if "Prod_CNL" in k]
+            self.textBrowser.append("===============EDK===============")
+
+            for edk_rom in edk_3:
+                edk_final.append(edk_rom)
+                patch_file = os.path.splitext(edk_rom)[0]
+                patch_file = os.path.basename(edk_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total EDK rom file : " + str(len(edk_3)))
+
+            #  XCODE
+            xcode_final = []
+            xcode_1 = [s for s in xcode if "CNL" in s]
+            xcode_2 = [s for s in xcode_1 if "Prod_CNL" in s]
+            self.textBrowser.append("===============XCODE===============")
+
+            for xcode_rom in xcode_2:
+                xcode_final.append(xcode_rom)
+                patch_file = os.path.splitext(xcode_rom)[0]
+                patch_file = os.path.basename(xcode_rom)
+                self.textBrowser.append(patch_file)
+            self.textBrowser.append("=================================")
+            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_2)))
+
         if self.radioButton_2.isChecked() and self.checkBox.isChecked() :
 
-            self.textBrowser.append("=================================")
-            all = glob.glob(bios_path + '/*.rom')
-            self.textBrowser.append("Total  rom file : " + str(len(all)))
+            # FSP
+            code = "FSP"
+            search_string = "/*FSP*.rom"
+            ui.core_base_search(bios_path, code, search_string)
 
-            #  FSP
-            fsp = []
-            fsp_1 = glob.glob(bios_path + '/*FSP*.rom')
-            self.textBrowser.append("===============FSP===============")
-            for fsp_rom in fsp_1:
-                fsp.append(fsp_rom)
-                patch_file = os.path.splitext(fsp_rom)[0]
-                patch_file = os.path.basename(patch_file)
-                self.textBrowser.append(patch_file)
-            self.textBrowser.append("=================================")
-            self.textBrowser.append("Total FSP rom file : " + str(len(fsp_1)))
         if self.radioButton_3.isChecked() and self.checkBox.isChecked() :
 
-            self.textBrowser.append("=================================")
-            all = glob.glob(bios_path + '/*.rom')
-            self.textBrowser.append("Total  rom file : " + str(len(all)))
+            # EDK
+            code = "EDK"
+            search_string = '/*EDK*.rom'
+            ui.core_base_search(bios_path, code, search_string)
 
-            #  EDK
-            edk =[]
-            edk_1 = glob.glob(bios_path + '/*EDK*.rom')
-            edk_2 = [k for k in edk_1 if 'XCODE' not in k]
-            self.textBrowser.append("===============EDK===============")
-            for edk_rom in edk_2:
-                edk.append(edk_rom)
-                patch_file = os.path.splitext(edk_rom)[0]
-                patch_file = os.path.basename(edk_rom)
-                self.textBrowser.append(patch_file)
-            self.textBrowser.append("=================================")
-            self.textBrowser.append("Total EDK rom file : " + str(len(edk_2)))
         if self.radioButton_4.isChecked() and self.checkBox.isChecked() :
 
-            self.textBrowser.append("=================================")
-            all = glob.glob(bios_path + '/*.rom')
-            self.textBrowser.append("Total  rom file : " + str(len(all)))
+            # XCODE
+            code = "XCODE"
+            search_string = "/*XCODE*.rom"
+            ui.core_base_search(bios_path, code, search_string)
 
-            #  XCODE
-            xcode = []
-            xcode_1 = glob.glob(bios_path + '/*XCODE*.rom')
-            self.textBrowser.append("===============XCODE===============")
-            for xcode_rom in xcode_1:
-                xcode.append(xcode_rom)
-                patch_file = os.path.splitext(xcode_rom)[0]
-                patch_file = os.path.basename(xcode_rom)
-                self.textBrowser.append(patch_file)
-            self.textBrowser.append("=================================")
-            self.textBrowser.append("Total XCODE rom file : " + str(len(xcode_1)))
 
     def stitch(self, output, iwfi, BIOS_rom):
         progress.setValue(0)
@@ -626,6 +886,34 @@ class Ui_Dialog(object):
             # XCODE
             for xcode_rom in xcode:
                 ui.stitch(xcode_path, iwfi_path, xcode_rom)
+        if self.radioButton_1.isChecked() and self.checkBox_4.isChecked():
+
+            #  FSP
+
+            for fsp_rom in fsp_final:
+                ui.stitch(fsp_path, iwfi_path, fsp_rom)
+
+            # EDK
+            for edk_rom in edk_final:
+                ui.stitch(edk_path, iwfi_path, edk_rom)
+
+            # XCODE
+            for xcode_rom in xcode_final:
+                ui.stitch(xcode_path, iwfi_path, xcode_rom)
+        if self.radioButton_1.isChecked() and self.checkBox_5.isChecked():
+
+            #  FSP
+
+            for fsp_rom in fsp_final:
+                ui.stitch(fsp_path, iwfi_path, fsp_rom)
+
+            # EDK
+            for edk_rom in edk_final:
+                ui.stitch(edk_path, iwfi_path, edk_rom)
+
+            # XCODE
+            for xcode_rom in xcode_final:
+                ui.stitch(xcode_path, iwfi_path, xcode_rom)
 
         if self.radioButton_2.isChecked() and self.checkBox.isChecked():
 
@@ -645,6 +933,8 @@ class Ui_Dialog(object):
             # XCODE
             for xcode_rom in xcode:
                 ui.stitch(xcode_path, iwfi_path, xcode_rom)
+
+
 
         if self.checkBox_8.isChecked():
             ui.stitch(output_dir, iwfi_path, single_file)
