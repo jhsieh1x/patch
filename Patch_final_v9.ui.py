@@ -660,16 +660,14 @@ class Ui_Dialog(object):
         if self.radioButton_1.isChecked() and self.checkBox_6.isChecked() :
 
             self.textBrowser.append("=================================")
-            all = glob.glob(bios_path + '/*.rom')
-            all_cnl = [s for s in all if "CNL" in s]
+            all = glob.glob(bios_path + '/*CNL*.rom')
+            all_cnl = [s for s in all if "CNL_" in s]
             all_cnl_1 = [s for s in all_cnl if "Prod_CNL" not in s]
             self.textBrowser.append("Total  rom file : " + str(len(all_cnl_1)))
 
             #  FSP
             fsp_final = []
-            print(fsp)
             fsp_1 = [a for a in fsp if "CNL_FSP" in a]
-            print(fsp_1)
             fsp_2 = [e for e in fsp_1 if "Prod_CNL" not in e]
             self.textBrowser.append("===============FSP===============")
 
@@ -685,7 +683,7 @@ class Ui_Dialog(object):
             #  EDK
             edk_final = []
             edk_1 = [k for k in edk if 'XCODE' not in k]
-            edk_2 = [k for k in edk_1 if "CNL" in k]
+            edk_2 = [k for k in edk_1 if "CNL_EDK" in k]
             edk_3 = [k for k in edk_2 if "Prod_CNL" not in k]
             self.textBrowser.append("===============EDK===============")
 
@@ -699,7 +697,7 @@ class Ui_Dialog(object):
 
             #  XCODE
             xcode_final = []
-            xcode_1 = [s for s in xcode if "CNL" in s]
+            xcode_1 = [s for s in xcode if "CNL_EDK" in s]
             xcode_2 = [s for s in xcode_1 if "Prod_CNL" not in s]
             self.textBrowser.append("===============XCODE===============")
 
@@ -713,7 +711,7 @@ class Ui_Dialog(object):
         if self.radioButton_1.isChecked() and self.checkBox_7.isChecked():
 
             self.textBrowser.append("=================================")
-            all = glob.glob(bios_path + '/*.rom')
+            all = glob.glob(bios_path + '/*CNL*.rom')
             all_cfl = [s for s in all if "CNL" in s]
             all_cfl_1 = [s for s in all_cfl if "Prod_CNL" in s]
             self.textBrowser.append("Total  rom file : " + str(len(all_cfl_1)))
@@ -914,7 +912,34 @@ class Ui_Dialog(object):
             # XCODE
             for xcode_rom in xcode_final:
                 ui.stitch(xcode_path, iwfi_path, xcode_rom)
+        if self.radioButton_1.isChecked() and self.checkBox_6.isChecked():
 
+            #  FSP
+
+            for fsp_rom in fsp_final:
+                ui.stitch(fsp_path, iwfi_path, fsp_rom)
+
+            # EDK
+            for edk_rom in edk_final:
+                ui.stitch(edk_path, iwfi_path, edk_rom)
+
+            # XCODE
+            for xcode_rom in xcode_final:
+                ui.stitch(xcode_path, iwfi_path, xcode_rom)
+        if self.radioButton_1.isChecked() and self.checkBox_7.isChecked():
+
+            #  FSP
+
+            for fsp_rom in fsp_final:
+                ui.stitch(fsp_path, iwfi_path, fsp_rom)
+
+            # EDK
+            for edk_rom in edk_final:
+                ui.stitch(edk_path, iwfi_path, edk_rom)
+
+            # XCODE
+            for xcode_rom in xcode_final:
+                ui.stitch(xcode_path, iwfi_path, xcode_rom)
         if self.radioButton_2.isChecked() and self.checkBox.isChecked():
 
             #  FSP
